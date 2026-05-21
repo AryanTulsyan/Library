@@ -1,10 +1,11 @@
 #!/bin/bash
 
-# 1. Install dependencies cleanly
+# Install dependencies
 pip install -r requirements.txt
 
-# 2. Collect static files
+# Collect static files
 python manage.py collectstatic --noinput
 
-# 3. Apply your database migrations to Neon
+# Run database migrations
 python manage.py migrate
+# force rebuild
