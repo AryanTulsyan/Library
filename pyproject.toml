@@ -14,4 +14,4 @@ dependencies = [
 entrypoint = "librarysite.wsgi:application"
 
 [tool.vercel.scripts]
-build = "python check_db.py && python manage.py migrate"
+build = "python manage.py makemigrations --merge --noinput && python manage.py migrate"
