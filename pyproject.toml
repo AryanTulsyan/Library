@@ -7,4 +7,4 @@ dependencies = []
 entrypoint = "librarysite.wsgi:application"
 
 [tool.vercel.scripts]
-build = "python -c \"import sys; t=None; import django; from django.db import connections; from django.db.utils import OperationalError, ProgrammingError; print('--- DIAGNOSTIC START ---'); \ntry:\n django.setup()\nexcept Exception as e:\n import traceback; traceback.print_exc(); t=e;\nif t: sys.exit(1)\" && python manage.py migrate"
+build = "python check_db.py && python manage.py migrate"
