@@ -8,8 +8,15 @@
   ],
   "routes": [
     {
+      "src": "/static/(.*)",
+      "dest": "/static/$1"
+    },
+    {
       "src": "/(.*)",
       "dest": "librarysite/wsgi.py"
     }
-  ]
+  ],
+  "build-utils": {
+    "buildCommand": "bash build.sh"
+  }
 }
