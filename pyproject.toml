@@ -1,2 +1,5 @@
+[tool.vercel]
+entrypoint = "librarysite.wsgi:application"
+
 [tool.vercel.scripts]
 build = "python manage.py migrate"
