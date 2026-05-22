@@ -1,6 +1,6 @@
 [project]
 name = "librarysite"
-version = "0.1.2"
+version = "0.1.4"
 dependencies = [
     "Django==6.0.5",
     "django-jazzmin==3.0.1",
@@ -8,7 +8,8 @@ dependencies = [
     "dj-database-url==3.1.2",
     "asgiref==3.11.1",
     "sqlparse==0.5.5",
-    "tzdata==2026.2"
+    "tzdata==2026.2",
+    "whitenoise==6.9.0"
 ]
 
 [tool.vercel]
