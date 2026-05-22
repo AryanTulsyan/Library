@@ -28,7 +28,7 @@ ALLOWED_HOSTS = ['.vercel.app', '127.0.0.1', 'localhost']
 # Application definition
 
 INSTALLED_APPS = [
-    'jazzmin',
+    'jazzmin',  # Must stay at the absolute top!
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Added to reliably serve UI static files on Vercel
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -120,18 +121,66 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-JAZZMIN_SETTINGS = {
-    "site_title": "Library Admin",
-    "site_header": "Library Management",
-    "site_brand": "Library Admin",
-    "welcome_sign": "Welcome to the Library Management System",
-    "search_model": ["auth.User", "books.Book"],
-    "show_sidebar": True,
-    "navigation_expanded": True,
+# Extra directories to look for static assets locally
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
+
+# Optimizes static asset storage for lightning-fast delivery via WhiteNoise
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
 }
 
-# This gives you a sleek, dark-mode friendly theme style
+# --- JAZZMIN BEAUTIFICATION CUSTOMIZATIONS ---
+JAZZMIN_SETTINGS = {
+    "site_title": "Library Admin",
+    "site_header": "Library System",
+    "site_brand": "Library Management",
+    "welcome_sign": "Welcome to the Library Management Dashboard",
+    "copyright": "Library Site LLC",
+    "search_model": ["auth.User", "books.Book"],
+    "user_avatar": None,
+    
+    # Left Navigation Panel configuration
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    "hide_apps": [],
+    "hide_models": [],
+    
+    # Dynamic icons for your models using FontAwesome
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "auth.user": "fas fa-user",
+        "auth.Group": "fas fa-users",
+        "books.book": "fas fa-book",
+    },
+    "default_icon_parents": "fas fa-chevron-circle-right",
+    "default_icon_children": "fas fa-circle",
+}
+
+# Advanced UI style overrides to swap boring styles with a modern dark/light hybrid palette
 JAZZMIN_UI_TWEAKS = {
-    "theme": "flatly",
+    "navbar_small_text": False,
+    "footer_small_text": False,
+    "body_small_text": False,
+    "brand_small_text": False,
+    "brand_colour": "navbar-dark",
+    "actions_sidebar": True,
+    "main_sidebar": "sidebar-dark-primary",
+    "sidebar_nav_child_indent": True,
+    "theme": "darkly",           # Sleek, high-contrast typography
     "dark_mode_theme": "darkly",
+    "button_classes": {
+        "primary": "btn-primary",
+        "secondary": "btn-secondary",
+        "info": "btn-info",
+        "warning": "btn-warning",
+        "danger": "btn-danger",
+        "success": "btn-success"
+    }
 }
