@@ -28,6 +28,7 @@ ALLOWED_HOSTS = ['.vercel.app', '127.0.0.1', 'localhost']
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin'
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -118,3 +119,19 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+JAZZMIN_SETTINGS = {
+    "site_title": "Library Admin",
+    "site_header": "Library Management",
+    "site_brand": "Library Admin",
+    "welcome_sign": "Welcome to the Library Management System",
+    "search_model": ["auth.User", "books.Book"],
+    "show_sidebar": True,
+    "navigation_expanded": True,
+}
+
+# This gives you a sleek, dark-mode friendly theme style
+JAZZMIN_UI_TWEAKS = {
+    "theme": "flatly",
+    "dark_mode_theme": "darkly",
+}
