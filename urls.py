@@ -2,12 +2,12 @@
 URL configuration for librarysite project.
 """
 from django.contrib import admin
-from django.urls import path, include  # Added include here
+from django.urls import path, include
 
 urlpatterns = [
-    # Admin panel route
+    # Route for your beautiful new Jazzmin admin dashboard
     path('admin/', admin.site.urls),
     
-    # Forward all homepage and root traffic to your books application
+    # Route that connects your main domain to your books catalog pages
     path('', include('books.urls')),
 ]
