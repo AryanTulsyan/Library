@@ -11,3 +11,21 @@
     }
   ]
 }
+
+{
+  "builds": [
+    {
+      "src": "librarysite/wsgi.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "librarysite/wsgi.py"
+    }
+  ],
+  "commands": {
+    "build": "python manage.py migrate && python manage.py collectstatic --noinput"
+  }
+}
