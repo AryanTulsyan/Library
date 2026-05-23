@@ -23,4 +23,8 @@ urlpatterns = [
     
     # Connects your homepage and catalog urls from the 'books' app
     path('', include('books.urls')),
+<<<<<<< Updated upstream
 ]
+=======
+]
+>>>>>>> Stashed changes
