@@ -1,18 +1,5 @@
 {
   "version": 2,
-  "routes": [
-    {
-      "src": "/static/(.*)",
-      "dest": "/static/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "librarysite/wsgi.py"
-    }
-  ]
-}
-
-{
   "builds": [
     {
       "src": "librarysite/wsgi.py",
@@ -24,8 +11,5 @@
       "src": "/(.*)",
       "dest": "librarysite/wsgi.py"
     }
-  ],
-  "commands": {
-    "build": "python manage.py migrate && python manage.py collectstatic --noinput"
-  }
+  ]
 }
