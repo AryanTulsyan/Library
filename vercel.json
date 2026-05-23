@@ -11,13 +11,5 @@
       "src": "/(.*)",
       "dest": "librarysite/wsgi.py"
     }
-  ],
-  "build": {
-    "env": {
-      "DISABLE_COLLECTSTATIC": "1"
-    }
-  },
-  "commands": {
-    "build": "python manage.py migrate --fake"
-  }
+  ]
 }

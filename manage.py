@@ -15,6 +15,15 @@ def main():
             "available on your PYTHONPATH environment variable? Did you "
             "forget to activate a virtual environment?"
         ) from exc
+    # ... inside your main() function ...
+    try:
+        from django.core.management import call_command
+        # This tells Django to safely record the migration as completed in the cloud
+        call_command("migrate", "books", fake=True)
+    except Exception:
+        pass  # Quietly ignore if it's already done or fails
+
+    execute_from_command_line(sys.argv)
     execute_from_command_line(sys.argv)
 
 
