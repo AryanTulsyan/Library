@@ -26,35 +26,39 @@ def borrow_book(request, book_id):
     """
     book = get_object_or_404(Book, id=book_id)
     
-    # Check if the current user already has an APPROVED/active request for this exact book
-    already_borrowed = BorrowRequest.objects.filter(
-        book=book, 
-        user=request.user, 
-        status='APPROVED'
-    ).exists()
-    
-    if already_borrowed:
-        messages.error(request, "You have already borrowed this book!")
-        # Safe string path fallback to avoid named-URL mismatch crashes
-        return redirect(f'/book/{book.id}/')
-    
-    # Check if a PENDING request already exists so they don't spam the button
-    pending_request = BorrowRequest.objects.filter(
-        book=book,
-        user=request.user,
-        status='PENDING'
-    ).exists()
+    try:
+        # Use user_id directly to guarantee clean execution on the database level
+        already_borrowed = BorrowRequest.objects.filter(
+            book_id=book.id, 
+            user_id=request.user.id, 
+            status='APPROVED'
+        ).exists()
+        
+        if already_borrowed:
+            messages.error(request, "You have already borrowed this book!")
+            return redirect(f'/book/{book.id}/')
+        
+        pending_request = BorrowRequest.objects.filter(
+            book_id=book.id,
+            user_id=request.user.id,
+            status='PENDING'
+        ).exists()
 
-    if pending_request:
-        messages.warning(request, "You already have a pending request for this book awaiting approval.")
-        return redirect(f'/book/{book.id}/')
+        if pending_request:
+            messages.warning(request, "You already have a pending request for this book awaiting approval.")
+            return redirect(f'/book/{book.id}/')
 
-    # Create a fresh pending request since no active or pending requests exist
-    BorrowRequest.objects.create(
-        book=book,
-        user=request.user,
-        status='PENDING'
-    )
-    
-    messages.success(request, "Your borrow request has been submitted for approval!")
+        # Create a fresh pending request
+        BorrowRequest.objects.create(
+            book=book,
+            user=request.user,
+            status='PENDING'
+        )
+        messages.success(request, "Your borrow request has been submitted for approval!")
+        
+    except Exception as e:
+        # If any internal DB or matching error happens, intercept it gracefully 
+        # instead of letting the server function throw a 500 crash
+        messages.error(request, "An internal error occurred while processing your request. Please try again.")
+        
     return redirect(f'/book/{book.id}/')
