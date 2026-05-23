@@ -11,3 +11,22 @@ class Book(models.Model):
 
     def __str__(self):
         return self.title
+
+from django.db import models
+from django.contrib.auth.models import User
+
+class BorrowRequest(models.models):
+    STATUS_CHOICES = [
+        ('PENDING', 'Pending'),
+        ('APPROVED', 'Approved'),
+        ('REJECTED', 'Rejected'),
+        ('RETURNED', 'Returned'),
+    ]
+
+    book = models.ForeignKey('Book', on_delete=models.CASCADE, related_name='borrow_requests')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='borrow_requests')
+    request_date = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING')
+
+    def __str__(self):
+        return f"{self.user.username} requested {self.book.title} ({self.status})"
