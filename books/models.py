@@ -1,6 +1,5 @@
 from django.db import models
-
-from django.db import models
+from django.contrib.auth.models import User
 
 class Book(models.Model):
     title = models.CharField(max_length=200)
@@ -12,10 +11,9 @@ class Book(models.Model):
     def __str__(self):
         return self.title
 
-from django.db import models
-from django.contrib.auth.models import User
 
-class BorrowRequest(models.models):
+# Fixed 'models.models' to 'models.Model' right here:
+class BorrowRequest(models.Model):
     STATUS_CHOICES = [
         ('PENDING', 'Pending'),
         ('APPROVED', 'Approved'),
