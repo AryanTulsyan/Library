@@ -24,7 +24,6 @@ def main():
         pass  # Quietly ignore if it's already done or fails
 
     execute_from_command_line(sys.argv)
-    execute_from_command_line(sys.argv)
 
 
 if __name__ == '__main__':
