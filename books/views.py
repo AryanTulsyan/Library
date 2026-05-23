@@ -1,21 +1,25 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db.models import Q
 from .models import Book
 
 def book_list(request):
-    # Fetch all books from the database
-    books = Book.objects.all()
+    # Grab search parameter 'q' from user submission form
+    query = request.GET.get('q')
     
-    # Send the books to the template
-    # Django automatically includes 'request.user' here behind the scenes
+    if query:
+        # Filter if search criteria is filled
+        books = Book.objects.filter(Q(title__icontains=query) | Q(author__icontains=query))
+    else:
+        # Serve comprehensive collection default state
+        books = Book.objects.all()
+        
     return render(request, 'books/book_list.html', {'books': books})
 
-@login_required
 def request_borrow(request, book_id):
+    # Ensure the item exists in the collection database table
     book = get_object_or_404(Book, id=book_id)
     
-    # Check your custom field name here (e.g., is_available or available)
     if book.is_available:  
         book.is_available = False
         book.save()

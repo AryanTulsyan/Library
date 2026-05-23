@@ -42,7 +42,7 @@
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* Card continuous lift and glow animation on hover */
+        /* Card lift and glow animation on hover */
         .custom-card:hover {
             transform: translateY(-8px);
             box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
@@ -107,11 +107,7 @@
                     </div>
                     
                     <div class="mt-auto">
-                        {% if user.is_authenticated %}
-                            <a href="{% url 'request_borrow' book.id %}" class="btn btn-primary custom-btn w-100 shadow-sm">Request to Borrow</a>
-                        {% else %}
-                            <a href="/admin/login/?next={{ request.path }}" class="btn btn-outline-secondary custom-btn w-100">Log in to Borrow</a>
-                        {% endif %}
+                        <a href="{% url 'request_borrow' book.id %}" class="btn btn-primary custom-btn w-100 shadow-sm">Request to Borrow</a>
                     </div>
                 </div>
             </div>
