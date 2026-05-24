@@ -20,7 +20,7 @@ def book_detail(request, book_id):
 
 
 @login_required
-def borrow_book(request, book_id):
+def request_borrow(request, book_id):
     """
     Handles submission of a borrow request for a specific book.
     """
