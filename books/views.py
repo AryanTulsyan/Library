@@ -12,12 +12,8 @@ def book_list(request):
 
 
 def book_detail(request, book_id):
-    """
-    Displays the details of a single book.
-    """
     book = get_object_or_404(Book, id=book_id)
     return render(request, 'books/book_detail.html', {'book': book})
-
 
 @login_required
 def request_borrow(request, book_id):
