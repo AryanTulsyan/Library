@@ -16,14 +16,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-4b$$v+4$zys2^tttea&j_3=e1nfo=ddshq9_io4$%zb7s+6*t_'
+# 1. Ensure SECRET_KEY has a safe fallback string
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-local-fallback-key-12345')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-# Automatically set DEBUG to False on Vercel if an environment variable specifies it, otherwise True
-# Completely erase or comment out the os.environ line and write this:
+# 2. Force DEBUG to True right now so we can see what's happening
 DEBUG = True
 
-# Also ensure your ALLOWED_HOSTS right below it looks like this for now:
+# 3. Double-check your ALLOWED_HOSTS looks exactly like this
 ALLOWED_HOSTS = ['*']
 
 
@@ -79,14 +78,20 @@ WSGI_APPLICATION = 'librarysite.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 # Automatically switches to Neon/PostgreSQL if DATABASE_URL environment variable is found.
 
+# Look for this section in librarysite/settings.py and replace it:
 DATABASES = {
-    'default': dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-        conn_max_age=600,
-        ssl_require=True if os.environ.get('DATABASE_URL') else False
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'neondb',                         # Your database name (usually neondb)
+        'USER': 'coltaryan',             # Replace with your actual Neon username
+        'PASSWORD': 'npg_bmY4hc5BpWGR',         # Replace with your actual Neon password
+        'HOST': 'your-neon-host.neon.tech',       # Replace with your actual Neon host string
+        'PORT': '5432',
+        'OPTIONS': {
+            'sslmode': 'require',
+        }
+    }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
