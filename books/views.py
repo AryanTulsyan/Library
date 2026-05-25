@@ -38,3 +38,7 @@ def request_borrow(request, book_id):
 
 def about_page(request):
     return render(request, 'books/about.html')
+# Add this to the bottom of books/views.py
+def book_detail(request, book_id):
+    book = get_object_or_404(Book, id=book_id)
+    return render(request, 'books/book_list.html', {'book': book})
