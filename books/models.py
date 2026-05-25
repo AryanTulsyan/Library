@@ -28,9 +28,23 @@ class BorrowRequest(models.Model):
     ]
 
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='borrow_requests')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='borrow_requests')
+    
+    # 🌟 CHANGED: user is now optional so non-members can borrow
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='borrow_requests')
+    
+    # 🌟 NEW: Track guest information directly
+    borrower_name = models.CharField(max_length=100, null=True, blank=True)
+    borrower_phone = models.CharField(max_length=20, null=True, blank=True)
+    
     request_date = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING')
+    delivery_location = models.CharField(max_length=255, default="Main Library Pick-up")
+    delivery_charge = models.DecimalField(max_digits=6, decimal_places=2, default=0.00)
+
+    @property
+    def total_upfront_due(self):
+        return self.book.deposit_fee + self.delivery_charge
 
     def __str__(self):
-        return f"{self.user.username} requested {self.book.title} ({self.status})"
+        name = self.user.username if self.user else self.borrower_name
+        return f"{name} requested {self.book.title} ({self.status})"

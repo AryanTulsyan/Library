@@ -8,13 +8,19 @@ class BookAdmin(admin.ModelAdmin):
 
 @admin.register(BorrowRequest)
 class BorrowRequestAdmin(admin.ModelAdmin):
-    list_display = ('book', 'user', 'status', 'request_date')
+    # Displays either the club username or guest name depending on who ordered
+    list_display = ('book', 'get_borrower', 'status', 'delivery_location', 'delivery_charge', 'request_date')
     list_filter = ('status', 'request_date')
-    search_fields = ('book__title', 'user__username')
-    
-    # Custom bulk actions for your admin panel dashboard
+    search_fields = ('book__title', 'user__username', 'borrower_name', 'borrower_phone')
     actions = ['approve_requests', 'reject_requests', 'mark_as_returned']
 
+    def get_borrower(self, obj):
+        if obj.user:
+            return f"🌟 Member: {obj.user.username}"
+        return f"👤 Guest: {obj.borrower_name} ({obj.borrower_phone})"
+    get_borrower.short_description = 'Borrower Details'
+    
+    # ... leave your action functions below exactly as they are ...
     def approve_requests(self, request, queryset):
         # Update the request status
         queryset.update(status='APPROVED')
