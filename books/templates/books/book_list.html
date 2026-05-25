@@ -127,20 +127,20 @@
                         <h6 class="fw-bold text-success mb-2">💳 Transaction Matrix</h6>
                         <div class="d-flex justify-content-between small mb-1">
                             <span class="text-muted">Rental Fee:</span>
-                            <span class="fw-bold">${{ book.borrow_fee }}</span>
+                            <span class="fw-bold">₹{{ book.borrow_fee }}</span>
                         </div>
                         <div class="d-flex justify-content-between small mb-1">
                             <span class="text-muted">Security Deposit:</span>
-                            <span class="fw-bold">${{ book.deposit_fee }}</span>
+                            <span class="fw-bold">₹{{ book.deposit_fee }}</span>
                         </div>
                         <div class="d-flex justify-content-between small mb-1">
                             <span class="text-muted">Delivery Charge:</span>
-                            <span class="fw-bold text-primary">$<span id="delivery-display-{{ book.id }}">0.00</span></span>
+                            <span class="fw-bold text-primary">₹<span id="delivery-display-{{ book.id }}">0.00</span></span>
                         </div>
                         <hr class="my-2">
                         <div class="d-flex justify-content-between font-monospace text-danger fw-bold mb-2">
                             <span>Initial Payment Due:</span>
-                            <span>$<span id="total-display-{{ book.id }}">{{ book.deposit_fee }}</span></span>
+                            <span class="fw-bold">₹<span id="total-display-{{ book.id }}">{{ book.deposit_fee }}</span></span>
                         </div>
 
                         {% if book.payment_number and book.payment_number != "YOUR-PAYMENT-NUMBER-HERE" %}
@@ -163,15 +163,19 @@
                                     <label class="form-label small fw-bold text-muted mb-0">📞 Phone Number:</label>
                                     <input type="tel" name="borrower_phone" class="form-control form-control-sm custom-input bg-white" placeholder="Enter mobile number" required>
                                 </div>
+                                
                                 <div class="mb-3">
-                                    <label class="form-label small fw-bold text-muted mb-0">📍 Delivery Address / Drop-off Location:</label>
-                                    <input type="text" 
-                                           id="location-input-{{ book.id }}"
-                                           name="delivery_location" 
-                                           class="form-control form-control-sm custom-input bg-white" 
-                                           placeholder="Type 'Library Pick-up' for free, or enter address" 
-                                           onkeyup="calculateLiveDelivery('{{ book.id }}', {{ book.deposit_fee }})"
-                                           required>
+                                    <label class="form-label small fw-bold text-muted mb-0">📍 Delivery Mode & Location:</label>
+                                    <select name="delivery_location" 
+                                            id="location-input-{{ book.id }}" 
+                                            class="form-select form-select-sm custom-input bg-white" 
+                                            onchange="calculateZoneDelivery('{{ book.id }}', '{{ book.deposit_fee }}')" 
+                                            required>
+                                        <option value="Library Pick-up" data-fee="0">Self Pick-up from Library (Free)</option>
+                                        <option value="Local Courier (Within 5km)" data-fee="40">Local Courier (Within 5km) - ₹40.00</option>
+                                        <option value="City Delivery (5-15km)" data-fee="90">Extended City Delivery (5-15km) - ₹90.00</option>
+                                        <option value="Out of City Shipping" data-fee="150">Out of City/Domestic Shipping - ₹150.00</option>
+                                    </select>
                                 </div>
                                 
                                 <button type="submit" class="btn btn-primary custom-btn w-100 shadow-sm">Confirm & Request Book</button>
@@ -192,23 +196,19 @@
 </div>
 
 <script>
-function calculateLiveDelivery(bookId, baseDeposit) {
-    const locationInput = document.getElementById(`location-input-${bookId}`).value.trim().toLowerCase();
-    const deliveryDisplay = document.getElementById(`delivery-display-${bookId}`);
-    const totalDisplay = document.getElementById(`total-display-${bookId}`);
+function calculateZoneDelivery(bookId, baseDepositStr) {
+    const selectEl = document.getElementById(`location-input-${bookId}`);
+    const selectedOption = selectEl.options[selectEl.selectedIndex];
     
-    let deliveryFee = 0.00;
+    // Extract delivery price from option attribute data tags
+    const deliveryFee = parseFloat(selectedOption.getAttribute('data-fee')) || 0.00;
+    const baseDeposit = parseFloat(baseDepositStr.replace(/[^0-9.]/g, '')) || 0;
     
-    // If the field isn't empty, and isn't a simple local counter pick-up, apply shipping fee
-    if (locationInput.length > 0 && locationInput !== "library pick-up" && locationInput !== "library pickup") {
-        deliveryFee = 2.50; 
-    }
+    const finalTotal = baseDeposit + deliveryFee;
     
-    const finalTotal = parseFloat(baseDeposit) + deliveryFee;
-    
-    // Render back to UI layout
-    deliveryDisplay.innerText = deliveryFee.toFixed(2);
-    totalDisplay.innerText = finalTotal.toFixed(2);
+    // Refresh targeted elements smoothly
+    document.getElementById(`delivery-display-${bookId}`).innerText = deliveryFee.toFixed(2);
+    document.getElementById(`total-display-${bookId}`).innerText = finalTotal.toFixed(2);
 }
 </script>
 </body>
