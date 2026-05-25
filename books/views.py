@@ -22,16 +22,20 @@ def request_borrow(request, book_id):
         guest_name = request.POST.get('borrower_name', '').strip()
         guest_phone = request.POST.get('borrower_phone', '').strip()
         
-        # 🌟 Map selected choices straight to backend financial database metrics
+        # Map shipping profiles straight to backend metrics
         zone_pricing = {
             "Library Pick-up": 0.00,
-            "Local Courier (Within 5km)": 40.00,
-            "City Delivery (5-15km)": 90.00,
+            "Local Courier": 40.00,
+            "City Delivery": 90.00,
             "Out of City Shipping": 150.00
         }
         calculated_delivery = zone_pricing.get(selected_zone, 0.00)
 
-        # Check for duplicates using member account profiles or contact metrics
+        # 🌟 Dynamic Math: Convert deposit and percentage integers to calculation floats
+        deposit = float(book.deposit_fee)
+        percentage = float(book.borrow_fee_percentage)
+        calculated_borrow_fee = deposit * (percentage / 100.0)
+
         if request.user.is_authenticated:
             already_requested = BorrowRequest.objects.filter(user=request.user, book=book, status='PENDING').exists()
         else:
@@ -41,7 +45,7 @@ def request_borrow(request, book_id):
             messages.warning(request, "A pending request for this book under these details already exists.")
             return redirect('book_list')
 
-        # Instantiate secure database record mapping variables cleanly
+        # Create your tracking record
         BorrowRequest.objects.create(
             book=book,
             user=request.user if request.user.is_authenticated else None,
@@ -52,15 +56,9 @@ def request_borrow(request, book_id):
             delivery_charge=calculated_delivery
         )
         
-        total_due = book.deposit_fee + calculated_delivery
-        messages.success(request, f"Success! Request submitted. Please transfer ₹{total_due:.2f} to complete your order.")
+        # Final confirmation pricing setup
+        total_due = deposit + calculated_delivery
+        messages.success(request, f"Success! Request submitted. Rental Fee (processed later): ₹{calculated_borrow_fee:.2f}. Please transfer ₹{total_due:.2f} to complete your order.")
         return redirect('book_list')
 
     return redirect('book_list')
-
-def book_detail(request, book_id):
-    book = get_object_or_404(Book, id=book_id)
-    return render(request, 'books/book_detail.html', {'book': book})
-
-def about_page(request):
-    return render(request, 'books/about.html')
