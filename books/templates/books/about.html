@@ -26,30 +26,84 @@
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.25);
             border-radius: 16px;
+            max-width: 900px;
         }
         .custom-btn {
             border-radius: 12px;
             padding: 0.6rem 1.5rem;
             font-weight: 500;
         }
+        .info-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        .map-responsive {
+            overflow: hidden;
+            padding-bottom: 56.25%;
+            position: relative;
+            height: 0;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        .map-responsive iframe {
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 100%;
+            position: absolute;
+        }
     </style>
 </head>
 <body>
-<div class="container my-5 py-5 px-4 glass-panel shadow-lg text-center">
+<div class="container my-5 py-5 px-4 glass-panel shadow-lg text-center mx-auto">
     <h1 class="fw-bold text-dark mb-3">📖 About Our Book Club & Library</h1>
-    <p class="fs-5 text-muted max-w-2xl mx-auto mb-4">
+    <p class="fs-5 text-muted mx-auto mb-5" style="max-width: 700px;">
         Welcome! Our public library catalog allows anyone to request and borrow books seamlessly. 
         If you want to unlock premium features, track your reading history, and join our community discussions, 
         consider becoming an official member of our Book Club!
     </p>
     
-    <div class="bg-white p-4 rounded-4 shadow-sm border mb-4 text-start mx-auto" style="max-width: 600px;">
-        <h5 class="fw-bold text-success mb-2">💡 How Public Borrowing Works:</h5>
-        <ul class="mb-0">
-            <li>Browse the collection and fill out your delivery details.</li>
-            <li>Pay the initial Security Deposit upfront via the designated address.</li>
-            <li>Upon safe return of the book, your deposit is refunded minus the small rental fee!</li>
-        </ul>
+    <div class="row g-4 text-start mb-5">
+        <div class="col-md-6">
+            <div class="info-card p-4 h-100 shadow-sm">
+                <h5 class="fw-bold text-success mb-3">💡 How Public Borrowing Works</h5>
+                <ul class="text-muted ps-3">
+                    <li class="mb-2">Browse the collection and fill out your delivery or pick-up details.</li>
+                    <li class="mb-2">Pay the initial Security Deposit upfront via the designated address.</li>
+                    <li>Upon safe return of the book, your deposit is completely refunded minus the small rental fee!</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="info-card p-4 h-100 shadow-sm">
+                <h5 class="fw-bold text-primary mb-3">📍 Our Main Branch Location</h5>
+                <p class="text-dark mb-1 fw-bold">The Reader's Haven Library</p>
+                <p class="text-muted small mb-3">
+                    123, Metro Station Road, Sector 5, <br>
+                    Near Central Park, Kolkata, West Bengal - 700091
+                </p>
+                <p class="text-muted small mb-0">
+                    <strong>⏰ Pick-up Timings:</strong> 10:00 AM - 7:00 PM (Mon - Sat)
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-card p-4 mb-5 shadow-sm text-start">
+        <h5 class="fw-bold text-dark mb-3">🗺️ Interactive Map Guide</h5>
+        <div class="map-responsive">
+            <iframe 
+                src="https://maps.app.goo.gl/idzXE4EiV2tQ4vUh6?g_st=iw" 
+                width="600" 
+                height="450" 
+                style="border:0;" 
+                allowfullscreen="" 
+                loading="lazy" 
+                referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+        </div>
     </div>
 
     <a href="{% url 'book_list' %}" class="btn btn-dark custom-btn shadow-sm">⬅️ Back to Catalog</a>
