@@ -22,7 +22,6 @@ def request_borrow(request, book_id):
         guest_name = request.POST.get('borrower_name', '').strip()
         guest_phone = request.POST.get('borrower_phone', '').strip()
         
-        # Map shipping profiles straight to backend metrics
         zone_pricing = {
             "Library Pick-up": 0.00,
             "Local Courier": 40.00,
@@ -31,7 +30,6 @@ def request_borrow(request, book_id):
         }
         calculated_delivery = zone_pricing.get(selected_zone, 0.00)
 
-        # Dynamic Math: Convert deposit and percentage integers to calculation floats
         deposit = float(book.deposit_fee)
         percentage = float(book.borrow_fee_percentage)
         calculated_borrow_fee = deposit * (percentage / 100.0)
@@ -45,7 +43,6 @@ def request_borrow(request, book_id):
             messages.warning(request, "A pending request for this book under these details already exists.")
             return redirect('book_list')
 
-        # Create your tracking record
         BorrowRequest.objects.create(
             book=book,
             user=request.user if request.user.is_authenticated else None,
@@ -56,14 +53,13 @@ def request_borrow(request, book_id):
             delivery_charge=calculated_delivery
         )
         
-        # Final confirmation pricing setup
         total_due = deposit + calculated_delivery
-        messages.success(request, f"Success! Request submitted. Rental Fee (processed later): ₹{calculated_borrow_fee:.2f}. Please transfer ₹{total_due:.2f} to complete your order.")
+        messages.success(request, f"Success! Request submitted. Rental Fee: ₹{calculated_borrow_fee:.2f}. Please transfer ₹{total_due:.2f} to complete your order.")
         return redirect('book_list')
 
     return redirect('book_list')
 
-# 🌟 RESTORED: This was missing and caused the Vercel compilation crash
+# 🌟 VERCEL FIX: This exact function must be visible to your urls.py file
 def book_detail(request, book_id):
     book = get_object_or_404(Book, id=book_id)
     return render(request, 'books/book_detail.html', {'book': book})

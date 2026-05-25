@@ -3,7 +3,7 @@ from .models import Book, BorrowRequest
 
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
-    list_display = ('title', 'author', 'available', 'borrow_fee', 'deposit_fee')
+    list_display = ('title', 'author', 'available', 'borrow_fee_percentage', 'deposit_fee')
     search_fields = ('title', 'author')
 
 @admin.register(BorrowRequest)
