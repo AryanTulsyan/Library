@@ -159,23 +159,33 @@
                                     <label class="form-label small fw-bold text-muted mb-0">👤 Your Name:</label>
                                     <input type="text" name="borrower_name" class="form-control form-control-sm custom-input bg-white" placeholder="Enter full name" required>
                                 </div>
+
                                 <div class="mb-2">
                                     <label class="form-label small fw-bold text-muted mb-0">📞 Phone Number:</label>
                                     <input type="tel" name="borrower_phone" class="form-control form-control-sm custom-input bg-white" placeholder="Enter mobile number" required>
                                 </div>
-                                
-                                <div class="mb-3">
-                                    <label class="form-label small fw-bold text-muted mb-0">📍 Delivery Mode & Location:</label>
-                                    <select name="delivery_location" 
-                                            id="location-input-{{ book.id }}" 
+
+                                <div class="mb-2">
+                                    <label class="form-label small fw-bold text-muted mb-0">🚗 1. Select Delivery Method:</label>
+                                    <select id="zone-select-{{ book.id }}" 
                                             class="form-select form-select-sm custom-input bg-white" 
                                             onchange="calculateZoneDelivery('{{ book.id }}', '{{ book.deposit_fee }}')" 
                                             required>
                                         <option value="Library Pick-up" data-fee="0">Self Pick-up from Library (Free)</option>
-                                        <option value="Local Courier (Within 5km)" data-fee="40">Local Courier (Within 5km) - ₹40.00</option>
-                                        <option value="City Delivery (5-15km)" data-fee="90">Extended City Delivery (5-15km) - ₹90.00</option>
+                                        <option value="Local Courier" data-fee="40">Local Courier (Within 5km) - ₹40.00</option>
+                                        <option value="City Delivery" data-fee="90">Extended City Delivery (5-15km) - ₹90.00</option>
                                         <option value="Out of City Shipping" data-fee="150">Out of City/Domestic Shipping - ₹150.00</option>
                                     </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold text-muted mb-0">📍 2. Complete Address Details:</label>
+                                    <input type="text" 
+                                           id="address-text-{{ book.id }}"
+                                           name="delivery_location" 
+                                           class="form-control form-control-sm custom-input bg-white" 
+                                           placeholder="Type 'Self Pick-up' OR write full apartment/street address here" 
+                                           required>
                                 </div>
                                 
                                 <button type="submit" class="btn btn-primary custom-btn w-100 shadow-sm">Confirm & Request Book</button>
@@ -197,8 +207,9 @@
 
 <script>
 function calculateZoneDelivery(bookId, baseDepositStr) {
-    const selectEl = document.getElementById(`location-input-${bookId}`);
+    const selectEl = document.getElementById(`zone-select-${bookId}`);
     const selectedOption = selectEl.options[selectEl.selectedIndex];
+    const addressInput = document.getElementById(`address-text-${bookId}`);
     
     // Extract delivery price from option attribute data tags
     const deliveryFee = parseFloat(selectedOption.getAttribute('data-fee')) || 0.00;
@@ -206,7 +217,14 @@ function calculateZoneDelivery(bookId, baseDepositStr) {
     
     const finalTotal = baseDeposit + deliveryFee;
     
-    // Refresh targeted elements smoothly
+    // Auto-fill or clear text field based on selected delivery configuration
+    if (deliveryFee === 0) {
+        addressInput.value = "Self Pick-up from Library";
+    } else if (addressInput.value === "Self Pick-up from Library") {
+        addressInput.value = "";
+    }
+    
+    // Refresh UI elements
     document.getElementById(`delivery-display-${bookId}`).innerText = deliveryFee.toFixed(2);
     document.getElementById(`total-display-${bookId}`).innerText = finalTotal.toFixed(2);
 }
