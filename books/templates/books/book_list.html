@@ -11,7 +11,6 @@
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             min-height: 100vh;
-            /* Animated mesh gradient background */
             background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
@@ -24,7 +23,6 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* Glassmorphism styling for containers and cards */
         .glass-panel {
             background: rgba(255, 255, 255, 0.75);
             backdrop-filter: blur(12px);
@@ -42,7 +40,6 @@
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* Card lift and glow animation on hover */
         .custom-card:hover {
             transform: translateY(-8px);
             box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
@@ -66,7 +63,6 @@
             transform: scale(0.95);
         }
 
-        /* Payment details nested section card */
         .payment-box {
             background: rgba(248, 249, 250, 0.9);
             border-left: 4px solid #198754;
@@ -106,7 +102,11 @@
 
     <div class="row">
         {% for book in books %}
-        <div class="col-md-4 mb-4">
+        <div class="col-md-4 mb-4 book-card-wrapper" 
+             data-book-id="{{ book.id }}" 
+             data-deposit="{{ book.deposit_fee|default:'0.00' }}" 
+             data-percentage="{{ book.borrow_fee|default:'0' }}">
+             
             <div class="card h-100 custom-card shadow-sm border-0">
                 <div class="card-body d-flex flex-column p-4">
                     <h5 class="card-title fw-bold text-dark mb-1">{{ book.title }}</h5>
@@ -127,7 +127,7 @@
                         <h6 class="fw-bold text-success mb-2">💳 Transaction Matrix</h6>
                         
                         <div class="d-flex justify-content-between small mb-1">
-                            <span class="text-muted">Rental Fee ({{ book.borrow_fee_percentage|default:"0" }}%):</span>
+                            <span class="text-muted">Rental Fee ({{ book.borrow_fee|default:"0" }}%):</span>
                             <span class="fw-bold text-dark">₹<span id="rental-display-{{ book.id }}">0.00</span></span>
                         </div>
                         
@@ -174,7 +174,7 @@
                                     <label class="form-label small fw-bold text-muted mb-0">🚗 1. Select Delivery Method:</label>
                                     <select id="zone-select-{{ book.id }}" 
                                             class="form-select form-select-sm custom-input bg-white" 
-                                            onchange="calculateZoneDelivery('{{ book.id }}', '{{ book.deposit_fee }}', '{{ book.borrow_fee_percentage }}')" 
+                                            onchange="handleZoneChange(this, '{{ book.id }}')" 
                                             required>
                                         <option value="Library Pick-up" data-fee="0">Self Pick-up from Library (Free)</option>
                                         <option value="Local Courier" data-fee="40">Local Courier (Within 5km) - ₹40.00</option>
@@ -211,21 +211,32 @@
 </div>
 
 <script>
-// Initialize the calculations correctly for all loaded books
 window.addEventListener('DOMContentLoaded', () => {
-    {% for book in books %}
-        calculateZoneDelivery(
-            "{{ book.id|escapejs }}", 
-            "{{ book.deposit_fee|default:'0.00'|escapejs }}", 
-            "{{ book.borrow_fee_percentage|default:'0'|escapejs }}"
-        );
-    {% endfor %}
+    const cards = document.querySelectorAll('.book-card-wrapper');
+    
+    cards.forEach(card => {
+        const bookId = card.getAttribute('data-book-id');
+        const baseDepositStr = card.getAttribute('data-deposit');
+        const percentageStr = card.getAttribute('data-percentage');
+        
+        const selectEl = document.getElementById(`zone-select-${bookId}`);
+        if (selectEl) {
+            runCalculations(bookId, selectEl, baseDepositStr, percentageStr);
+        }
+    });
 });
 
-function calculateZoneDelivery(bookId, baseDepositStr, percentageStr) {
-    const selectEl = document.getElementById(`zone-select-${bookId}`);
-    if (!selectEl) return;
+function handleZoneChange(selectElement, bookId) {
+    const card = selectElement.closest('.book-card-wrapper');
+    if (!card) return;
     
+    const baseDepositStr = card.getAttribute('data-deposit');
+    const percentageStr = card.getAttribute('data-percentage');
+    
+    runCalculations(bookId, selectElement, baseDepositStr, percentageStr);
+}
+
+function runCalculations(bookId, selectEl, baseDepositStr, percentageStr) {
     const selectedOption = selectEl.options[selectEl.selectedIndex];
     const addressInput = document.getElementById(`address-text-${bookId}`);
     

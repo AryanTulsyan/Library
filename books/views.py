@@ -30,8 +30,9 @@ def request_borrow(request, book_id):
         }
         calculated_delivery = zone_pricing.get(selected_zone, 0.00)
 
+        # 🌟 Option 2 Math: Calculate borrow_fee dynamically as a percentage of deposit_fee
         deposit = float(book.deposit_fee)
-        percentage = float(book.borrow_fee_percentage)
+        percentage = float(book.borrow_fee)  # Using your existing borrow_fee field as a percentage rate
         calculated_borrow_fee = deposit * (percentage / 100.0)
 
         if request.user.is_authenticated:
@@ -53,13 +54,13 @@ def request_borrow(request, book_id):
             delivery_charge=calculated_delivery
         )
         
+        # Initial payment required to borrow remains Deposit + Delivery
         total_due = deposit + calculated_delivery
-        messages.success(request, f"Success! Request submitted. Rental Fee: ₹{calculated_borrow_fee:.2f}. Please transfer ₹{total_due:.2f} to complete your order.")
+        messages.success(request, f"Success! Request submitted. Rental Fee (processed later): ₹{calculated_borrow_fee:.2f}. Please transfer ₹{total_due:.2f} to complete your order.")
         return redirect('book_list')
 
     return redirect('book_list')
 
-# 🌟 VERCEL FIX: This exact function must be visible to your urls.py file
 def book_detail(request, book_id):
     book = get_object_or_404(Book, id=book_id)
     return render(request, 'books/book_detail.html', {'book': book})
