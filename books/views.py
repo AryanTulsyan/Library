@@ -31,7 +31,7 @@ def request_borrow(request, book_id):
         }
         calculated_delivery = zone_pricing.get(selected_zone, 0.00)
 
-        # 🌟 Dynamic Math: Convert deposit and percentage integers to calculation floats
+        # Dynamic Math: Convert deposit and percentage integers to calculation floats
         deposit = float(book.deposit_fee)
         percentage = float(book.borrow_fee_percentage)
         calculated_borrow_fee = deposit * (percentage / 100.0)
@@ -62,3 +62,11 @@ def request_borrow(request, book_id):
         return redirect('book_list')
 
     return redirect('book_list')
+
+# 🌟 RESTORED: This was missing and caused the Vercel compilation crash
+def book_detail(request, book_id):
+    book = get_object_or_404(Book, id=book_id)
+    return render(request, 'books/book_detail.html', {'book': book})
+
+def about_page(request):
+    return render(request, 'books/about.html')
