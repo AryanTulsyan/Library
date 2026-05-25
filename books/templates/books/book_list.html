@@ -65,6 +65,15 @@
         .custom-btn:active {
             transform: scale(0.95);
         }
+
+        /* Payment details nested section card */
+        .payment-box {
+            background: rgba(248, 249, 250, 0.9);
+            border-left: 4px solid #198754;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
     </style>
 </head>
 <body>
@@ -72,6 +81,7 @@
     
     <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
         <h2 class="fw-bold m-0 text-dark">✨ Digital Library Catalog</h2>
+        <a href="{% url 'about_page' %}" class="btn btn-outline-dark custom-btn shadow-sm">ℹ️ About Our Library</a>
     </div>
 
     <div class="row mb-5">
@@ -102,12 +112,54 @@
                     <h5 class="card-title fw-bold text-dark mb-1">{{ book.title }}</h5>
                     <p class="text-muted small mb-3">By {{ book.author }}</p>
                     
-                    <div class="badge bg-light text-dark align-self-start mb-4 px-3 py-2 border rounded-pill">
-                        📄 Pages: {{ book.total_number_of_pages }}
+                    <div class="d-flex gap-2 flex-wrap mb-3">
+                        <div class="badge bg-light text-dark px-3 py-2 border rounded-pill">
+                            📄 Pages: {{ book.total_number_of_pages }}
+                        </div>
+                        {% if book.available %}
+                            <div class="badge bg-success text-white px-3 py-2 rounded-pill">In Stock</div>
+                        {% else %}
+                            <div class="badge bg-danger text-white px-3 py-2 rounded-pill">Borrowed</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="payment-box shadow-sm">
+                        <h6 class="fw-bold text-success mb-2">💳 Transaction Matrix</h6>
+                        <div class="d-flex justify-content-between small mb-1">
+                            <span class="text-muted">Rental Fee:</span>
+                            <span class="fw-bold">${{ book.borrow_fee }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between small mb-1">
+                            <span class="text-muted">Security Deposit:</span>
+                            <span class="fw-bold">${{ book.deposit_fee }}</span>
+                        </div>
+                        <hr class="my-2">
+                        <div class="d-flex justify-content-between font-monospace text-danger fw-bold mb-3">
+                            <span>Amount Due:</span>
+                            <span>${{ book.total_fee }}</span>
+                        </div>
+
+                        <div class="bg-white p-2 rounded border text-center shadow-sm">
+                            {% if book.payment_number and book.payment_number != "YOUR-PAYMENT-NUMBER-HERE" %}
+                                <p class="m-0 mb-1 small fw-bold text-muted">UPI / Transfer Destination:</p>
+                                <span class="badge bg-dark mb-2 px-2 py-1 fs-6 font-monospace d-inline-block text-wrap w-100">{{ book.payment_number }}</span>
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=130x130&data={{ book.payment_number }}" alt="Payment QR Endpoint" class="img-fluid rounded mx-auto d-block shadow-sm">
+                            {% else %}
+                                <p class="m-0 mb-1 small fw-bold text-danger">⚠️ Payment System Offline</p>
+                                <div class="bg-light d-flex align-items-center justify-content-center mx-auto rounded mb-1" style="width: 130px; height: 130px; border: 1px dashed #dc3545;">
+                                    <small class="text-muted p-2" style="font-size: 0.75rem;">Set up payment ID in dashboard settings</small>
+                                </div>
+                            {% endif %}
+                            <small class="text-muted d-block mt-2" style="font-size: 0.75rem;">Clear deposit dues prior to requesting</small>
+                        </div>
                     </div>
                     
                     <div class="mt-auto">
-                        <a href="{% url 'request_borrow' book.id %}" class="btn btn-primary custom-btn w-100 shadow-sm">Request to Borrow</a>
+                        {% if book.available %}
+                            <a href="{% url 'request_borrow' book.id %}" class="btn btn-primary custom-btn w-100 shadow-sm">Request to Borrow</a>
+                        {% else %}
+                            <button class="btn btn-secondary custom-btn w-100 shadow-sm" disabled>Currently Unavailable</button>
+                        {% endif %}
                     </div>
                 </div>
             </div>
