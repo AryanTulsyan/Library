@@ -130,12 +130,12 @@
                         </div>
                         <div class="d-flex justify-content-between small mb-1">
                             <span class="text-muted">Security Deposit:</span>
-                            <span class="fw-bold">${{ book.deposit_fee }} <small class="text-muted">(Refundable)</small></span>
+                            <span class="fw-bold">${{ book.deposit_fee }}</span>
                         </div>
                         <hr class="my-2">
                         <div class="d-flex justify-content-between font-monospace text-danger fw-bold mb-2">
-                            <span>Amount Due Now:</span>
-                            <span>${{ book.borrow_fee }}</span>
+                            <span>Initial Payment Due:</span>
+                            <span>${{ book.deposit_fee }}</span>
                         </div>
 
                         {% if book.payment_number and book.payment_number != "YOUR-PAYMENT-NUMBER-HERE" %}
@@ -143,6 +143,11 @@
                                 <strong>Payment Method Address:</strong> <span class="font-monospace text-dark">{{ book.payment_number }}</span>
                             </div>
                         {% endif %}
+                        
+                        <div class="mt-2 text-center" style="font-size: 0.72rem; line-height: 1.2;">
+                            <span class="text-muted">💡 Upon return, your refund will be: </span>
+                            <span class="fw-bold text-success">${{ book.deposit_fee }} (Deposit) - ${{ book.borrow_fee }} (Rental Fee)</span>
+                        </div>
                     </div>
                     
                     <div class="mt-auto">
