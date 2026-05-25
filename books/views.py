@@ -10,7 +10,6 @@ def book_list(request):
         books = Book.objects.all()
     return render(request, 'books/book_list.html', {'books': books})
 
-# 🌟 LOOK: No @login_required here anymore! Anyone can access this view.
 def request_borrow(request, book_id):
     book = get_object_or_404(Book, id=book_id)
     
@@ -25,7 +24,6 @@ def request_borrow(request, book_id):
         
         calculated_delivery = 2.50 if user_location and user_location.lower() != "library pick-up" else 0.00
 
-        # Check for duplicates using name/phone for guests, or user profiles for members
         if request.user.is_authenticated:
             already_requested = BorrowRequest.objects.filter(user=request.user, book=book, status='PENDING').exists()
         else:
@@ -35,10 +33,9 @@ def request_borrow(request, book_id):
             messages.warning(request, "A pending request for this book under these details already exists.")
             return redirect('book_list')
 
-        # Create the request record safely
         BorrowRequest.objects.create(
             book=book,
-            user=request.user if request.user.is_authenticated else None, # Link profile if member
+            user=request.user if request.user.is_authenticated else None,
             borrower_name=guest_name if not request.user.is_authenticated else None,
             borrower_phone=guest_phone if not request.user.is_authenticated else None,
             status='PENDING',
@@ -50,3 +47,8 @@ def request_borrow(request, book_id):
         return redirect('book_list')
 
     return redirect('book_list')
+
+# 🌟 This ensures the AttributeError goes away completely!
+def book_detail(request, book_id):
+    book = get_object_or_404(Book, id=book_id)
+    return render(request, 'books/book_detail.html', {'book': book})
