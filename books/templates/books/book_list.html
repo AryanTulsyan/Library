@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Library Catalog</title>
+    <title>Modern Minds Library Catalog</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700&display=swap">
     
@@ -11,6 +11,7 @@
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             min-height: 100vh;
+            /* Animated mesh gradient background */
             background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
@@ -23,6 +24,7 @@
             100% { background-position: 0% 50%; }
         }
 
+        /* Glassmorphism styling for containers and cards */
         .glass-panel {
             background: rgba(255, 255, 255, 0.75);
             backdrop-filter: blur(12px);
@@ -40,6 +42,7 @@
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
+        /* Card lift and glow animation on hover */
         .custom-card:hover {
             transform: translateY(-8px);
             box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
@@ -63,6 +66,7 @@
             transform: scale(0.95);
         }
 
+        /* Payment details nested section card */
         .payment-box {
             background: rgba(248, 249, 250, 0.9);
             border-left: 4px solid #198754;
@@ -123,7 +127,7 @@
                         <h6 class="fw-bold text-success mb-2">💳 Transaction Matrix</h6>
                         
                         <div class="d-flex justify-content-between small mb-1">
-                            <span class="text-muted">Rental Fee ({{ book.borrow_fee_percentage }}%):</span>
+                            <span class="text-muted">Rental Fee ({{ book.borrow_fee_percentage|default:"0" }}%):</span>
                             <span class="fw-bold text-dark">₹<span id="rental-display-{{ book.id }}">0.00</span></span>
                         </div>
                         
@@ -131,11 +135,14 @@
                             <span class="text-muted">Security Deposit:</span>
                             <span class="fw-bold">₹{{ book.deposit_fee }}</span>
                         </div>
+                        
                         <div class="d-flex justify-content-between small mb-1">
                             <span class="text-muted">Delivery Charge:</span>
                             <span class="fw-bold text-primary">₹<span id="delivery-display-{{ book.id }}">0.00</span></span>
                         </div>
+                        
                         <hr class="my-2">
+                        
                         <div class="d-flex justify-content-between font-monospace text-danger fw-bold mb-2">
                             <span>Initial Payment Due:</span>
                             <span class="fw-bold">₹<span id="total-display-{{ book.id }}">{{ book.deposit_fee }}</span></span>
@@ -204,38 +211,46 @@
 </div>
 
 <script>
-// 🌟 Initialize the base percentage layout on window loading states
+// Initialize the calculations correctly for all loaded books
 window.addEventListener('DOMContentLoaded', () => {
     {% for book in books %}
-        calculateZoneDelivery('{{ book.id }}', '{{ book.deposit_fee }}', '{{ book.borrow_fee_percentage }}');
+        calculateZoneDelivery(
+            "{{ book.id|escapejs }}", 
+            "{{ book.deposit_fee|default:'0.00'|escapejs }}", 
+            "{{ book.borrow_fee_percentage|default:'0'|escapejs }}"
+        );
     {% endfor %}
 });
 
 function calculateZoneDelivery(bookId, baseDepositStr, percentageStr) {
     const selectEl = document.getElementById(`zone-select-${bookId}`);
+    if (!selectEl) return;
+    
     const selectedOption = selectEl.options[selectEl.selectedIndex];
     const addressInput = document.getElementById(`address-text-${bookId}`);
     
     const deliveryFee = parseFloat(selectedOption.getAttribute('data-fee')) || 0.00;
-    const baseDeposit = parseFloat(baseDepositStr.replace(/[^0-9.]/g, '')) || 0;
+    const baseDeposit = parseFloat(baseDepositStr.replace(/[^0-9.]/g, '')) || 0.00;
     const percentage = parseFloat(percentageStr) || 0;
     
-    // Calculate the absolute rental fee from deposit percentage
     const calculatedRentalFee = baseDeposit * (percentage / 100.0);
-    
-    // Initial upfront check payment consists of Deposit + Shipping
     const finalTotal = baseDeposit + deliveryFee;
     
-    if (deliveryFee === 0) {
-        addressInput.value = "Self Pick-up from Library";
-    } else if (addressInput.value === "Self Pick-up from Library") {
-        addressInput.value = "";
+    if (addressInput) {
+        if (deliveryFee === 0) {
+            addressInput.value = "Self Pick-up from Library";
+        } else if (addressInput.value === "Self Pick-up from Library") {
+            addressInput.value = "";
+        }
     }
     
-    // Update live layout elements cleanly
-    document.getElementById(`rental-display-${bookId}`).innerText = calculatedRentalFee.toFixed(2);
-    document.getElementById(`delivery-display-${bookId}`).innerText = deliveryFee.toFixed(2);
-    document.getElementById(`total-display-${bookId}`).innerText = finalTotal.toFixed(2);
+    const rentalBox = document.getElementById(`rental-display-${bookId}`);
+    const deliveryBox = document.getElementById(`delivery-display-${bookId}`);
+    const totalBox = document.getElementById(`total-display-${bookId}`);
+    
+    if (rentalBox) rentalBox.innerText = calculatedRentalFee.toFixed(2);
+    if (deliveryBox) deliveryBox.innerText = deliveryFee.toFixed(2);
+    if (totalBox) totalBox.innerText = finalTotal.toFixed(2);
 }
 </script>
 </body>
