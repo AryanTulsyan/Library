@@ -9,8 +9,12 @@ class Book(models.Model):
     location = models.CharField(max_length=10, null=True, blank=True)
     borrow_fee = models.DecimalField(max_digits=6, decimal_places=2, default=0.00)
     deposit_fee = models.DecimalField(max_digits=6, decimal_places=2, default=0.00)
-    payment_number = models.CharField(max_length=50, default="YOUR-PAYMENT-NUMBER-HERE")
+    payment_number = models.CharField(max_length=50, default=9833770438)
     
+    @property
+    def total_fee(self):
+        return self.borrow_fee + self.deposit_fee
+
     def __str__(self):
         return self.title
 

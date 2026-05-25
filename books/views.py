@@ -41,4 +41,4 @@ def about_page(request):
 # Add this to the bottom of books/views.py
 def book_detail(request, book_id):
     book = get_object_or_404(Book, id=book_id)
-    return render(request, 'books/book_list.html', {'book': book})
+    return render(request, 'books/book_detail.html', {'book': book})
