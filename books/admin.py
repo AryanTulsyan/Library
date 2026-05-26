@@ -3,16 +3,16 @@ from .models import Book, BorrowRequest
 
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
-    # 🌟 REMOVED: 'total_number_of_pages' is no longer listed in the main columns
+    # 1. Main table view columns
     list_display = ['call_number', 'title', 'author', 'deposit_fee', 'borrow_fee', 'available']
     
     list_display_links = ['title']
     list_editable = ['call_number', 'available']
     search_fields = ['title', 'author', 'call_number']
     
-    # 🌟 EXCLUDED: Hides deposit_fee from the "Add Book" / "Edit Book" forms 
-    # so it automatically uses the constant 500.00 fallback value instead
-    exclude = ['deposit_fee']
+    # 🌟 THE FIX: Explicitly name ONLY the fields you want to see when adding/editing a book.
+    # By leaving 'deposit_fee' out of this list, Django physically removes it from the form.
+    fields = ['title', 'author', 'total_number_of_pages', 'borrow_fee', 'call_number', 'payment_number']
 
 @admin.register(BorrowRequest)
 class BorrowRequestAdmin(admin.ModelAdmin):
