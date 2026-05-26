@@ -10,9 +10,9 @@ class BookAdmin(admin.ModelAdmin):
     list_editable = ['call_number', 'available']
     search_fields = ['title', 'author', 'call_number']
     
-    # 🌟 THE FIX: Explicitly name ONLY the fields you want to see when adding/editing a book.
-    # By leaving 'deposit_fee' out of this list, Django physically removes it from the form.
-    fields = ['title', 'author', 'total_number_of_pages', 'borrow_fee', 'call_number', 'payment_number']
+    # 🌟 FIXED: Removed 'total_number_of_pages' from this list.
+    # Now Django will completely hide both the pages field and the deposit field when editing!
+    fields = ['title', 'author', 'borrow_fee', 'call_number', 'payment_number']
 
 @admin.register(BorrowRequest)
 class BorrowRequestAdmin(admin.ModelAdmin):
