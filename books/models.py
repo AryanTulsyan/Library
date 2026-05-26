@@ -6,7 +6,7 @@ class Book(models.Model):
     author = models.CharField(max_length=200)
     total_number_of_pages = models.IntegerField(default=100)
     available = models.BooleanField(default=True)
-    deposit_fee = models.DecimalField(max_digits=6, decimal_places=2)
+    deposit_fee = models.DecimalField(max_digits=6, decimal_places=2, default=1000.00)
     borrow_fee = models.IntegerField(default=10)  # Handles your Option 2 percentage math
     payment_number = models.CharField(max_length=50, default="9833950030")
     
