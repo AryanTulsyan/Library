@@ -10,7 +10,13 @@ class Book(models.Model):
     borrow_fee = models.IntegerField(default=10)  # Handles your Option 2 percentage math
     payment_number = models.CharField(max_length=50, default="9833950030")
     
-    # 🌟 Call Number field integrated safely
+    author = models.CharField(
+        max_length=200, 
+        default="Anonymous", 
+        blank=True, 
+        help_text="Leave blank if the author is unknown or anonymous"
+    )
+    
     call_number = models.CharField(
         max_length=100, 
         blank=True, 
