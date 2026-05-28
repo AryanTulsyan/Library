@@ -118,10 +118,6 @@
                     {% endif %}
                     
                     <div class="d-flex gap-2 flex-wrap mb-3">
-                        <div class="badge bg-dark font-monospace px-3 py-2 border shadow-sm" style="letter-spacing: 0.5px;">
-                            🗄️ Call No: {{ book.call_number|default:"Processing..." }}
-                        </div>
-
                         {% if book.available %}
                             <div class="badge bg-success text-white px-3 py-2 rounded-pill">In Stock</div>
                         {% else %}
