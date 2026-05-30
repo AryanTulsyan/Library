@@ -23,17 +23,21 @@
             100% { background-position: 0% 50%; }
         }
 
- .glass-panel {
-    background-color: #0b141a; /* Exact WhatsApp Dark Mode Background */
+.glass-panel {
+    /* 1. Official WhatsApp light-mode base pastel color */
+    background-color: #efeae2; 
+    
+    /* 2. Real WhatsApp high-fidelity extracted doodle image asset */
     background-image: url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png");
+    
+    /* 3. Force the image to tile seamlessly and perfectly, exactly like the chat app */
     background-repeat: repeat;
-    background-size: 450px auto;
+    background-size: 400px auto; /* Scale the doodles down to look tiny and natural */
     
-    /* 🌟 THE DARK MODE TRICK: Inverts the black doodles to light grey/white */
-    filter: invert(1) hue-rotate(180deg) brightness(0.6) contrast(1.2); 
-    
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    /* 4. Keeps your container boundaries clean */
+    border: 1px solid rgba(0, 0, 0, 0.05);
     border-radius: 16px;
+}
 }
         .custom-card {
             background: rgba(255, 255, 255, 0.85);
