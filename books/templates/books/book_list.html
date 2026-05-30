@@ -9,13 +9,31 @@
     
     <style>
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            min-height: 100vh;
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-            color: #1a1a1a;
-        }
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    /* 🌟 UPDATE: Keep body text light so headers stay legible outside the panel */
+    color: #ffffff; 
+}
+
+.glass-panel {
+    /* 🌟 1. Exact WhatsApp Dark Mode background hex color */
+    background-color: #0b141a; 
+    
+    /* 2. Official doodle asset file */
+    background-image: url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png");
+    background-repeat: repeat;
+    background-size: 450px auto;
+    
+    /* 🌟 3. THE MAGIC FILTER: This flips the dark sketches to crisp, low-contrast white/gray doodles */
+    filter: invert(1) hue-rotate(180deg) brightness(0.45) contrast(1.1); 
+    
+    /* 4. Structural boundaries */
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+}
 
         @keyframes gradientBG {
             0% { background-position: 0% 50%; }
@@ -23,21 +41,12 @@
             100% { background-position: 0% 50%; }
         }
 
-    .glass-panel {
-    /* 1. Official WhatsApp light-mode base pastel color */
-    background-color: #efeae2; 
+    /* 🌟 THE DARK MODE TRICK: Inverts the black doodles to light grey/white */
+    filter: invert(1) hue-rotate(180deg) brightness(0.6) contrast(1.2); 
     
-    /* 2. Real WhatsApp high-fidelity extracted doodle image asset */
-    background-image: url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png");
-    
-    /* 3. Force the image to tile seamlessly and perfectly, exactly like the chat app */
-    background-repeat: repeat;
-    background-size: 400px auto; /* Scale the doodles down to look tiny and natural */
-    
-    /* 4. Keeps your container boundaries clean */
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 16px;
-}
+
         .custom-card {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(8px);
